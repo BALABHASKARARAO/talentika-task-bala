@@ -73,3 +73,57 @@ COPY --from=build /usr/src/app/dist ./dist
 USER nodejs
 CMD ["pm2-runtime", "start", "dist/index.js"]
 ```
+
+
+# Security:
+ ## 1. Show how to block ports
+  * ans: sudo iptables -D INPUT -p tcp --dport 22 -j DROP
+## 2. Show how to setup port forwarding
+ * ans: step1: we need install __reveser porxy__ example nginx
+ *  edit /etc/nginx/nginx.conf or /etc/nginx/sites-available/default
+* update the content like  below
+
+```
+server {
+    listen 80;
+    server_name example.com;
+
+    location / {
+        proxy_pass http://localhost:8080;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+}
+```
+# Network:
+## 1. Show list of processes using the network.
+* ans: sudo lsof -i
+
+## 2. Show the list of IPs a process is connected to
+* ans: netstat -tupln
+## 3. Show how to list open files and kill processes tied to a user
+* ans: sudo lsof -u <username>  (or)
+  * sudo killall -u <username>
+
+# Code:
+## 1. For each multiple of 3, print "AVA" instead of the number.
+```
+#!/bin/bash
+for i in range(1, 100):
+    if i % 3 == 0:
+        print("AVA")
+    else:
+        continue
+```
+
+## 2. For each multiple of 5, print "AMO" instead of the number.
+```
+#!/bin/bash
+for i in range(1, 100):
+    if i % 5 == 0:
+        print("AVA")
+    else:
+        continue
+```
