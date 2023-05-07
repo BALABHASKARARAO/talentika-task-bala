@@ -48,3 +48,28 @@ while true; do
     sleep 10
 done
 ```
+
+# Docker
+
+1. Create a sample docker container with a Node.js Express app and demonstrate the installation.
+* the below is the dockerfile
+```
+# Build stage
+FROM node:14 AS build
+WORKDIR /usr/src/app
+COPY package*.json ./
+RUN npm install --only=production
+COPY . .
+RUN npm run build
+
+# Production stage
+FROM node:14-alpine
+ENV TZ=Asia/Kolkata
+RUN apk --no-cache add tzdata
+RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
+RUN addgroup -S nodejs && adduser -S nodejs -G nodejs
+WORKDIR /home/nodejs/app
+COPY --from=build /usr/src/app/dist ./dist
+USER nodejs
+CMD ["pm2-runtime", "start", "dist/index.js"]
+```
